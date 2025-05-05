@@ -22,31 +22,13 @@ class Splash extends StatelessWidget {
       color: const Color(0xFF14749A),
       child: Stack(
         children: [
-          // 🔹 Título "iBreath" arriba
-          Positioned(
-            top: 40,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Text(
-                'iBreath',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-
-          // 🔹 Icono "home" arriba izquierda
+          // 🔹 Elementos flotantes (home, puntos, íconos)
           const Positioned(
             top: 40,
             left: 20,
             child: Icon(Icons.home, color: Colors.white, size: 28),
           ),
 
-          // 🔹 Iconos de colores arriba derecha
           Positioned(
             top: 38,
             right: 20,
@@ -59,15 +41,16 @@ class Splash extends StatelessWidget {
             ),
           ),
 
-          // 🔹 Contenido central (logo + título grande + subtítulo)
+          // 🔹 Contenido central: logo + título + subtítulo
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  'assets/images/logo.png',
-                  width: 160,
-                  height: 160,
+                  'assets/images/logo2.jpg',
+                  width: 180,
+                  height: 180,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 20),
                 const Text(
@@ -95,8 +78,8 @@ class Splash extends StatelessWidget {
           // 🔹 Botón ¡Vamos allá!
           Positioned(
             bottom: 100,
-            left: MediaQuery.of(context).size.width * 0.25,
-            right: MediaQuery.of(context).size.width * 0.25,
+            left: MediaQuery.of(context).size.width * 0.2,
+            right: MediaQuery.of(context).size.width * 0.2,
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/menu');
