@@ -6,30 +6,25 @@ class MenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: const Color(0xFF14749A),
+      backgroundColor: const Color(0xFF14749A),
+      body: SafeArea(
         child: Stack(
           children: [
-            // Cabecera común
-           Positioned(
-  top: 40,
-  left: 20,
-  child: IconButton(
-    icon: const Icon(Icons.home, color: Colors.white, size: 32),
-    onPressed: () {
-      Navigator.pushNamedAndRemoveUntil(
-        context,
-        '/',
-        (Route<dynamic> route) => false,
-      );
-    },
-  ),
-),
-
+            // 🔹 Home
             Positioned(
-              top: 40,
+              top: 20,
+              left: 20,
+              child: IconButton(
+                icon: const Icon(Icons.home, color: Colors.white, size: 32),
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                },
+              ),
+            ),
+
+            // 🔹 Dots derecha arriba
+            Positioned(
+              top: 22,
               right: 20,
               child: Row(
                 children: [
@@ -39,77 +34,62 @@ class MenuScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const Positioned(
-              top: 90,
-              left: 160,
-              child: Text(
-                'iBreath',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontFamily: 'ADLaM Display',
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            const Positioned(
-              top: 140,
-              left: 50,
-              child: Text(
-                '¿Qué te apetece?',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontFamily: 'ABeeZee',
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      offset: Offset(0, 4),
-                      blurRadius: 4,
-                      color: Color(0x40000000),
-                    ),
-                  ],
-                ),
-              ),
-            ),
 
-            // Botones de opciones con imágenes
-            Positioned(
-              top: 200,
-              left: 30,
-              child: _buildMenuOption(
-                context,
-                'assets/images/relax.png',
-                'Relajación',
-                () {}, // Acción
-              ),
-            ),
-            Positioned(
-              top: 200,
-              right: 30,
-              child: _buildMenuOption(
-                context,
-                'assets/images/help.png',
-                '¡Ayuda!',
-                () {},
-              ),
-            ),
-            Positioned(
-              top: 400,
-              left: 30,
-              child: _buildMenuOption(
-                context,
-                'assets/images/story.png',
-                'Cuenta Cuentos',
-                () {},
-              ),
-            ),
-            Positioned(
-              top: 400,
-              right: 30,
-              child: _buildMenuOption(
-                context,
-                'assets/images/play.png',
-                'Juega!',
-                () {},
+            // 🔹 Contenido principal
+            Padding(
+              padding: const EdgeInsets.only(top: 80),
+              child: Column(
+                children: [
+                  const Center(
+                    child: Text(
+                      'iBreath',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontFamily: 'ADLaM Display',
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const Center(
+                    child: Text(
+                      '¿Qué te apetece?',
+                      style: TextStyle(
+                        fontSize: 26,
+                        fontFamily: 'ABeeZee',
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(0, 4),
+                            blurRadius: 4,
+                            color: Color(0x40000000),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // 🔹 Opciones con GridView
+                  Expanded(
+  child: GridView.count(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+    crossAxisCount: 2,
+    mainAxisSpacing: 1, // 🔽 MENOS ESPACIO ENTRE FILAS
+    crossAxisSpacing: 2,
+    childAspectRatio: 0.85, // 🔄 HACE CADA ELEMENTO MÁS ALTO
+    children: [
+      _buildMenuOption(context, 'assets/images/relax.jpg', 'Relajación', () {}),
+      _buildMenuOption(context, 'assets/images/ayuda.jpg', '¡Ayuda!', () {
+        Navigator.pushNamed(context, '/help');
+      }),
+      _buildMenuOption(context, 'assets/images/cuento.jpg', 'Cuenta Cuentos', () {}),
+      _buildMenuOption(context, 'assets/images/puzzle.jpg', 'Juega!', () {}),
+    ],
+  ),
+),
+
+                ],
               ),
             ),
           ],
@@ -132,12 +112,13 @@ class MenuScreen extends StatelessWidget {
 
   Widget _buildMenuOption(BuildContext context, String img, String label, VoidCallback onTap) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         GestureDetector(
           onTap: onTap,
           child: Container(
-            width: 140,
-            height: 140,
+            width: 120,
+            height: 120,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
               image: DecorationImage(
@@ -147,12 +128,12 @@ class MenuScreen extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 10),
         Text(
           label,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 20,
+            fontSize: 18,
             fontFamily: 'ABeeZee',
           ),
         ),
