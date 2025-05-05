@@ -62,7 +62,10 @@ class HelpScreen extends StatelessWidget {
             right: 0,
             child: Center(
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+  Navigator.pushNamed(context, '/sentimiento');
+},
+
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2EC8C6),
                   foregroundColor: Colors.white,

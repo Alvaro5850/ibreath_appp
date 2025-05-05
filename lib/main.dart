@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'splash.dart';
 import 'menu.dart'; 
 import 'help_screen.dart';
-
+import 'SentimientosScreen.dart'; // nombre correcto
+import 'mensaje_enviado.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,7 +27,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const SplashScreenWrapper(),
         '/menu': (context) => const MenuScreen(),
         '/help': (context) => const HelpScreen(),
-
+        '/sentimiento': (context) => const SentimientoScreen(),
+        '/mensaje_enviado': (context) => const MensajeEnviadoScreen(),
       },
     );
   }
