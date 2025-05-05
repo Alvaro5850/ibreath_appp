@@ -13,11 +13,21 @@ class MenuScreen extends StatelessWidget {
         child: Stack(
           children: [
             // Cabecera común
-            const Positioned(
-              top: 40,
-              left: 20,
-              child: Icon(Icons.home, color: Colors.white, size: 32),
-            ),
+           Positioned(
+  top: 40,
+  left: 20,
+  child: IconButton(
+    icon: const Icon(Icons.home, color: Colors.white, size: 32),
+    onPressed: () {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/',
+        (Route<dynamic> route) => false,
+      );
+    },
+  ),
+),
+
             Positioned(
               top: 40,
               right: 20,
