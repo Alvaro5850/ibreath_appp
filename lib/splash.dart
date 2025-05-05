@@ -24,7 +24,7 @@ class Splash extends StatelessWidget {
         children: [
           // 🔹 Título "iBreath" arriba
           Positioned(
-            top: 32,
+            top: 40,
             left: 0,
             right: 0,
             child: Center(
@@ -32,42 +32,60 @@ class Splash extends StatelessWidget {
                 'iBreath',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 28,
-                  fontFamily: 'ABeeZee',
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ),
 
-          // 🔹 Logo y subtítulo centrados
+          // 🔹 Icono "home" arriba izquierda
+          const Positioned(
+            top: 40,
+            left: 20,
+            child: Icon(Icons.home, color: Colors.white, size: 28),
+          ),
+
+          // 🔹 Iconos de colores arriba derecha
+          Positioned(
+            top: 38,
+            right: 20,
+            child: Row(
+              children: [
+                _buildDot(Colors.purple),
+                const SizedBox(width: 6),
+                _buildDot(Colors.yellow),
+              ],
+            ),
+          ),
+
+          // 🔹 Contenido central (logo + título grande + subtítulo)
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
                   'assets/images/logo.png',
-                  width: 402,
-                  height: 322,
+                  width: 160,
+                  height: 160,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 20),
                 const Text(
-                  '',
+                  'iBreath',
                   style: TextStyle(
-                    fontSize: 36,
+                    fontSize: 38,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'ABeeZee',
-                    color: Colors.white,
+                    color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 8),
                 const Text(
-                  '',
+                  'EL RINCÓN TRANQUILO DE TU DÍA',
                   style: TextStyle(
-                    fontSize: 14,
-                    fontFamily: 'ABeeZee',
+                    fontSize: 12,
                     color: Colors.white70,
-                    letterSpacing: 1.2,
+                    letterSpacing: 1.3,
                   ),
                 ),
               ],
@@ -76,9 +94,9 @@ class Splash extends StatelessWidget {
 
           // 🔹 Botón ¡Vamos allá!
           Positioned(
-            bottom: 80,
-            left: MediaQuery.of(context).size.width * 0.1,
-            right: MediaQuery.of(context).size.width * 0.1,
+            bottom: 100,
+            left: MediaQuery.of(context).size.width * 0.25,
+            right: MediaQuery.of(context).size.width * 0.25,
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/menu');
@@ -94,7 +112,7 @@ class Splash extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 12),
                 child: Text(
                   '¡Vamos allá!',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
@@ -105,7 +123,7 @@ class Splash extends StatelessWidget {
             bottom: 20,
             left: 20,
             child: CircleAvatar(
-              radius: 32,
+              radius: 28,
               backgroundImage: AssetImage('assets/images/user_icon.png'),
             ),
           ),
@@ -119,26 +137,6 @@ class Splash extends StatelessWidget {
               backgroundImage: AssetImage('assets/images/emergency boton.jpg'),
             ),
           ),
-
-          // 🔹 Iconos de colores arriba derecha
-          Positioned(
-            top: 40,
-            right: 20,
-            child: Row(
-              children: [
-                _buildDot(Colors.purple),
-                const SizedBox(width: 6),
-                _buildDot(Colors.yellow),
-              ],
-            ),
-          ),
-
-          // 🔹 Icono "home" arriba izquierda
-          Positioned(
-            top: 40,
-            left: 20,
-            child: const Icon(Icons.home, color: Colors.white, size: 32),
-          ),
         ],
       ),
     );
@@ -146,8 +144,8 @@ class Splash extends StatelessWidget {
 
   Widget _buildDot(Color color) {
     return Container(
-      width: 16,
-      height: 16,
+      width: 14,
+      height: 14,
       decoration: BoxDecoration(
         color: color,
         shape: BoxShape.circle,
