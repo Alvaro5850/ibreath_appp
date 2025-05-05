@@ -112,14 +112,21 @@ class Splash extends StatelessWidget {
           ),
 
           // 🔹 Botón de emergencia abajo derecha
-          Positioned(
-            bottom: 20,
-            right: 20,
-            child: CircleAvatar(
-              radius: 26,
-              backgroundImage: AssetImage('assets/images/emergency boton.jpg'),
-            ),
-          ),
+          // 🔹 Botón de emergencia abajo derecha
+Positioned(
+  bottom: 20,
+  right: 20,
+  child: GestureDetector(
+    onTap: () {
+      Navigator.pushNamed(context, '/help');
+    },
+    child: CircleAvatar(
+      radius: 26,
+      backgroundImage: AssetImage('assets/images/emergency boton.jpg'),
+    ),
+  ),
+),
+
         ],
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'splash.dart';
-import 'menu.dart'; // Asegúrate de tener este archivo creado
+import 'menu.dart'; 
+import 'help_screen.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +25,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreenWrapper(),
         '/menu': (context) => const MenuScreen(),
+        '/help': (context) => const HelpScreen(),
+
       },
     );
   }
