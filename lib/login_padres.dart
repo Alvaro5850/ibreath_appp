@@ -1,32 +1,49 @@
+// lib/screens/login_padres.dart
+
 import 'package:flutter/material.dart';
-import 'ver_emociones.dart';
+import '../db/padres_db.dart';
+import 'registro_padres.dart';
+import 'recuperar_contrasena.dart';
 
 class LoginPadresScreen extends StatefulWidget {
-  const LoginPadresScreen({super.key});
+  const LoginPadresScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginPadresScreen> createState() => _LoginPadresScreenState();
+  _LoginPadresScreenState createState() => _LoginPadresScreenState();
 }
 
 class _LoginPadresScreenState extends State<LoginPadresScreen> {
-  final TextEditingController _usuarioController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String error = '';
 
-  void _login() {
-    final usuario = _usuarioController.text;
+  void _login() async {
+    final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    if (usuario == 'padre' && password == '1234') {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const VerEmocionesScreen()),
-      );
+    final padre = await PadresDB.instance.getPadre(email, password);
+    if (padre != null) {
+      // Navegar a la pantalla principal o de emociones
+      Navigator.pushReplacementNamed(context, '/ver_emociones');
     } else {
       setState(() {
-        error = 'Usuario o contraseña incorrectos';
+        error = 'Email o contraseña incorrectos';
       });
     }
+  }
+
+  void _navigateToRegistro() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const RegistroPadresScreen()),
+    );
+  }
+
+  void _navigateToRecuperarContrasena() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const RecuperarContrasenaScreen()),
+    );
   }
 
   @override
@@ -43,8 +60,8 @@ class _LoginPadresScreenState extends State<LoginPadresScreen> {
         child: Column(
           children: [
             TextField(
-              controller: _usuarioController,
-              decoration: const InputDecoration(labelText: 'Usuario'),
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             const SizedBox(height: 10),
             TextField(
@@ -56,7 +73,15 @@ class _LoginPadresScreenState extends State<LoginPadresScreen> {
             ElevatedButton(
               onPressed: _login,
               style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-              child: const Text('Entrar'),
+              child: const Text('Iniciar sesión'),
+            ),
+            TextButton(
+              onPressed: _navigateToRegistro,
+              child: const Text('¿No tienes cuenta? Regístrate'),
+            ),
+            TextButton(
+              onPressed: _navigateToRecuperarContrasena,
+              child: const Text('¿Olvidaste tu contraseña?'),
             ),
             if (error.isNotEmpty)
               Padding(
