@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'db_helper.dart'; // Asegúrate de importar tu helper
 
-class SentimientoScreen extends StatelessWidget {
+class SentimientoScreen extends StatefulWidget {
   const SentimientoScreen({super.key});
+
+  @override
+  State<SentimientoScreen> createState() => _SentimientoScreenState();
+}
+
+class _SentimientoScreenState extends State<SentimientoScreen> {
+  String? emocionSeleccionada;
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +25,11 @@ class SentimientoScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-  icon: const Icon(Icons.home, color: Colors.white),
-  onPressed: () {
-    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-  },
-),
-
+                  icon: const Icon(Icons.home, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                  },
+                ),
                 Row(
                   children: [
                     _buildDot(Colors.purple),
@@ -52,7 +59,6 @@ class SentimientoScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          // Emociones
           Wrap(
             spacing: 20,
             runSpacing: 20,
@@ -68,25 +74,37 @@ class SentimientoScreen extends StatelessWidget {
           ),
           const SizedBox(height: 40),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                emocionSeleccionada = 'No lo sé';
+              });
+              DBHelper.guardarEmocion('No lo sé');
+              Navigator.pushNamed(context, '/mensaje_enviado');
+            },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF2EC8B9),
+              backgroundColor: const Color(0xFF7489A0),
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
             ),
             child: const Text('No lo sé'),
           ),
           const SizedBox(height: 10),
           ElevatedButton(
-  onPressed: () {
-    Navigator.pushNamed(context, '/mensaje_enviado');
-  },
-  style: ElevatedButton.styleFrom(
-    backgroundColor: const Color(0xFF2EC8B9),
-    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-  ),
-  child: const Text('Enviar'),
-),
-
+            onPressed: () {
+              if (emocionSeleccionada != null) {
+                DBHelper.guardarEmocion(emocionSeleccionada!);
+                Navigator.pushNamed(context, '/mensaje_enviado');
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Por favor, selecciona una emoción')),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2EC8B9),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+            ),
+            child: const Text('Enviar'),
+          ),
         ],
       ),
     );
@@ -105,18 +123,28 @@ class SentimientoScreen extends StatelessWidget {
   }
 
   Widget _buildEmotion(String label, String imagePath) {
-    return Column(
-      children: [
-        CircleAvatar(
-          backgroundImage: AssetImage(imagePath),
-          radius: 35,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-      ],
+    final isSelected = emocionSeleccionada == label;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          emocionSeleccionada = label;
+        });
+      },
+      child: Column(
+        children: [
+          CircleAvatar(
+            backgroundImage: AssetImage(imagePath),
+            radius: isSelected ? 40 : 35,
+            backgroundColor: isSelected ? Colors.white : Colors.transparent,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
     );
   }
 }

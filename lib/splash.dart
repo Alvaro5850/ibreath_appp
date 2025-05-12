@@ -102,14 +102,21 @@ class Splash extends StatelessWidget {
           ),
 
           // 🔹 Icono de usuario abajo izquierda
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: CircleAvatar(
-              radius: 28,
-              backgroundImage: AssetImage('assets/images/user_icon.png'),
-            ),
-          ),
+          // 🔹 Icono de usuario abajo izquierda
+Positioned(
+  bottom: 20,
+  left: 20,
+  child: GestureDetector(
+    onTap: () {
+      Navigator.pushNamed(context, '/login_padres');
+    },
+    child: const CircleAvatar(
+      radius: 28,
+      backgroundImage: AssetImage('assets/images/user_icon.png'),
+    ),
+  ),
+),
+
 
           // 🔹 Botón de emergencia abajo derecha
           // 🔹 Botón de emergencia abajo derecha

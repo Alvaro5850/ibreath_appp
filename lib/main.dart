@@ -1,13 +1,23 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'splash.dart';
-import 'menu.dart'; 
+import 'menu.dart';
 import 'help_screen.dart';
-import 'SentimientosScreen.dart'; // nombre correcto
+import 'SentimientosScreen.dart';
 import 'mensaje_enviado.dart';
+import 'db_initializer.dart';
+import 'ver_emociones.dart';
+import 'login_padres.dart';
 
 void main() {
+  // Solo inicializa esto si estás en Windows
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
+    initDatabaseForWindows();
+  }
+
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -29,6 +39,8 @@ class MyApp extends StatelessWidget {
         '/help': (context) => const HelpScreen(),
         '/sentimiento': (context) => const SentimientoScreen(),
         '/mensaje_enviado': (context) => const MensajeEnviadoScreen(),
+        '/ver_emociones': (context) => const VerEmocionesScreen(),
+        '/login_padres': (context) => const LoginPadresScreen(),
       },
     );
   }
