@@ -16,15 +16,12 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
 
   bool _isPlaying = true;
   double _volume = 0.5;
-
-  int totalBreaths = 5; // 🧘‍♂️ respiraciones por sesión
+  int totalBreaths = 5;
   int remainingBreaths = 5;
 
   @override
   void initState() {
     super.initState();
-
-    // 🎵 Audio setup
     _audioPlayer = AudioPlayer();
     _dingPlayer = AudioPlayer();
 
@@ -32,13 +29,11 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
     _audioPlayer.setVolume(_volume);
     _audioPlayer.play(AssetSource('sounds/inner-peace-339640.mp3'));
 
-    // 🌀 Animación
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
     )..repeat(reverse: true);
 
-    // ⏱️ Disminuir contador de respiraciones
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         if (mounted && remainingBreaths > 0) {
@@ -54,17 +49,7 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
     });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    _audioPlayer.dispose();
-    _dingPlayer.dispose();
-    super.dispose();
-  }
-
-  void _playDing() {
-    _dingPlayer.play(AssetSource('sounds/ding.mp3'));
-  }
+  void _playDing() => _dingPlayer.play(AssetSource('sounds/ding.mp3'));
 
   void _toggleMusic() async {
     if (_isPlaying) {
@@ -78,9 +63,7 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
   }
 
   void _changeVolume(double value) {
-    setState(() {
-      _volume = value;
-    });
+    setState(() => _volume = value);
     _audioPlayer.setVolume(_volume);
   }
 
@@ -92,11 +75,19 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    _audioPlayer.dispose();
+    _dingPlayer.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // 🌊 Fondo
+          // 🌊 Fondo animado
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -107,6 +98,7 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
             },
           ),
 
+          // 🌬️ Contenido
           SafeArea(
             child: Column(
               children: [
@@ -117,24 +109,28 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
                     fontSize: 34,
                     fontFamily: 'ADLaM Display',
                     color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  remainingBreaths > 0
-                      ? 'Respira conmigo\n($remainingBreaths restantes)'
-                      : '¡Sesión completada!',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    color: Colors.white70,
-                    fontFamily: 'ABeeZee',
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 500),
+                  child: Text(
+                    remainingBreaths > 0
+                        ? 'Respira conmigo\n($remainingBreaths restantes)'
+                        : '¡Sesión completada!',
+                    key: ValueKey(remainingBreaths),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.white70,
+                      fontFamily: 'ABeeZee',
+                    ),
                   ),
                 ),
                 const SizedBox(height: 30),
 
-                // 🌀 Animación
+                // 🎯 Círculo de respiración
                 Expanded(
                   child: Center(
                     child: ScaleTransition(
@@ -142,27 +138,36 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
                         CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
                       ),
                       child: Container(
-                        width: 180,
-                        height: 180,
+                        width: 200,
+                        height: 200,
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withOpacity(0.15),
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.white.withOpacity(0.4),
-                              blurRadius: 30,
-                              spreadRadius: 6,
+                              color: Colors.cyanAccent.withOpacity(0.4),
+                              blurRadius: 40,
+                              spreadRadius: 8,
                             ),
                           ],
                         ),
-                        child: const Center(
-                          child: Text(
-                            'Inhala\nExhala',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.white,
-                              fontFamily: 'ABeeZee',
+                        child: Center(
+                          child: ShaderMask(
+                            shaderCallback: (Rect bounds) {
+                              return const LinearGradient(
+                                colors: [Colors.cyanAccent, Colors.white],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ).createShader(bounds);
+                            },
+                            child: const Text(
+                              'Inhala\nExhala',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontFamily: 'ABeeZee',
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -171,7 +176,7 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
                   ),
                 ),
 
-                // 🔈 Volumen
+                // 🎧 Control de volumen
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Column(
@@ -186,14 +191,14 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
                         max: 1.0,
                         divisions: 10,
                         label: (_volume * 100).toInt().toString(),
-                        activeColor: Colors.tealAccent,
+                        activeColor: Colors.cyanAccent,
                         onChanged: _changeVolume,
                       ),
                     ],
                   ),
                 ),
 
-                // 🎯 Botones
+                // 🟢 Botones
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -218,7 +223,7 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
                         icon: const Icon(Icons.replay),
                         label: const Text('Otra vez'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white24,
+                          backgroundColor: const Color.fromARGB(59, 255, 255, 255),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -237,7 +242,7 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
   }
 }
 
-// 🎨 Olas suaves
+// 🌊 Olas suaves de fondo
 class _WavePainter extends CustomPainter {
   final double animationValue;
 
@@ -261,7 +266,6 @@ class _WavePainter extends CustomPainter {
       double y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight + size.height * 0.9;
       path.lineTo(i, y);
     }
-
     path.lineTo(size.width, size.height);
     path.close();
 

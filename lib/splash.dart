@@ -41,6 +41,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        // 🌊 Fondo animado
         AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
@@ -50,17 +51,19 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
             );
           },
         ),
+
+        // 🧩 Contenido principal
         SafeArea(
           child: Stack(
             children: [
-              // Icono Home
+              // 🔙 Icono Home
               const Positioned(
                 top: 20,
                 left: 20,
                 child: Icon(Icons.home, color: Colors.white, size: 28),
               ),
 
-              // Ícono de usuario blanco en la esquina superior derecha
+              // 👤 Usuario niño arriba derecha
               Positioned(
                 top: 12,
                 right: 16,
@@ -76,7 +79,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // Contenido central
+              // 💙 Imagen de pulmones y título
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 80),
@@ -86,13 +89,13 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                       Hero(
                         tag: 'logo',
                         child: Image.asset(
-                          'assets/images/logo4.png',
-                          width: 150,
-                          height: 150,
+                          'assets/images/pulmones.png',
+                          width: 180,
+                          height: 180,
                           fit: BoxFit.contain,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 25),
                       const Text(
                         'iBreath',
                         style: TextStyle(
@@ -123,7 +126,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // Botón principal
+              // 🧘 Botón principal
               Positioned(
                 bottom: 120,
                 left: MediaQuery.of(context).size.width * 0.2,
@@ -148,7 +151,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 🔹 PADRES: Abajo izquierda con etiqueta
+              // 👨‍👧 Acceso padres
               Positioned(
                 bottom: 20,
                 left: 10,
@@ -160,8 +163,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                       },
                       child: const CircleAvatar(
                         radius: 28,
-                        backgroundImage:
-                            AssetImage('assets/images/user_icon.png'),
+                        backgroundImage: AssetImage('assets/images/parental.jpg'),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -177,7 +179,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 🔹 URGENCIA: Abajo derecha con etiqueta encima
+              // 🚨 Botón emergencia
               Positioned(
                 bottom: 20,
                 right: 10,
@@ -211,21 +213,9 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
       ],
     );
   }
-
-  Widget _buildDot(Color color) {
-    return Container(
-      width: 14,
-      height: 14,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-        border: Border.all(color: Colors.white, width: 2),
-      ),
-    );
-  }
 }
 
-// 🌊 Fondo animado de olas
+// 🌊 Fondo animado
 class WavePainter extends CustomPainter {
   final double animationValue;
 
@@ -241,14 +231,12 @@ class WavePainter extends CustomPainter {
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     final path = Path();
-    final double waveHeight = 30;
+    const double waveHeight = 30;
     final double waveSpeed = animationValue * 2 * pi;
 
     path.moveTo(0, size.height);
-
     for (double i = 0; i <= size.width; i++) {
-      double y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight +
-          size.height * 0.9;
+      final y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight + size.height * 0.9;
       path.lineTo(i, y);
     }
 
