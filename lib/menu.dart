@@ -134,9 +134,9 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                             _buildAnimatedOption('assets/images/cuento.jpg', 'Cuenta Cuentos', () {
                               _navigateWithTransition(context, const Placeholder());
                             }),
-                            _buildAnimatedOption('assets/images/puzzle.jpg', 'Juega!', () {
-                              _navigateWithTransition(context, const Placeholder());
-                            }),
+                           _buildAnimatedOption('assets/images/puzzle.jpg', 'Juega!', () {
+  Navigator.pushNamed(context, '/jugar_puzzle');
+}),
                           ],
                         ),
                       ),

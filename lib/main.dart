@@ -8,7 +8,7 @@ import 'mensaje_enviado.dart';
 import 'db_initializer.dart';
 import 'ver_emociones.dart';
 import 'login_padres.dart';
-
+import 'puzzle_game_screen.dart'; // importa la pantalla
 void main() {
   // Solo inicializa esto si estás en Windows
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/mensaje_enviado': (context) => const MensajeEnviadoScreen(),
         '/ver_emociones': (context) => const VerEmocionesScreen(),
         '/login_padres': (context) => const LoginPadresScreen(),
+        '/jugar_puzzle': (context) => const PuzzleGameScreen(imagePath: '',),
       },
     );
   }
