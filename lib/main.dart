@@ -8,6 +8,10 @@ import 'mensaje_enviado.dart';
 import 'db_initializer.dart';
 import 'ver_emociones.dart';
 import 'login_padres.dart';
+import 'registro_padres.dart';
+import 'seleccion_perfil.dart';
+import 'registro_hijo.dart';
+import 'hijos_padres.dart';
 import 'puzzle_game_screen.dart'; // importa la pantalla
 void main() {
   // Solo inicializa esto si estás en Windows
@@ -40,7 +44,11 @@ class MyApp extends StatelessWidget {
         '/sentimiento': (context) => const SentimientoScreen(),
         '/mensaje_enviado': (context) => const MensajeEnviadoScreen(),
         '/ver_emociones': (context) => const VerEmocionesScreen(),
-        '/login_padres': (context) => const LoginPadresScreen(),
+        '/login_padres': (context) => const LoginPadresScreen(), 
+         '/registro_padres': (context) => const RegistroPadresScreen(),
+        '/seleccion_perfil': (context) => const SeleccionPerfilScreen(),
+        '/hijos_padres': (context) => const HijosPadresScreen(),
+        '/registro_hijo': (context) => const RegistroHijoScreen(),
         '/jugar_puzzle': (context) => const PuzzleGameScreen(imagePath: '',),
       },
     );

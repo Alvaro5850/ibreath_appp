@@ -1,8 +1,11 @@
+// lib/login_padres.dart
+
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../db/padres_db.dart';
+import '../db/padres_db.dart';           // Tu base de datos de padres
 import 'registro_padres.dart';
 import 'recuperar_contrasena.dart';
+import 'hijos_padres.dart';             // Importamos la pantalla HijosPadresScreen
 
 class LoginPadresScreen extends StatefulWidget {
   const LoginPadresScreen({Key? key}) : super(key: key);
@@ -11,16 +14,30 @@ class LoginPadresScreen extends StatefulWidget {
   _LoginPadresScreenState createState() => _LoginPadresScreenState();
 }
 
-class _LoginPadresScreenState extends State<LoginPadresScreen> with SingleTickerProviderStateMixin {
+class _LoginPadresScreenState extends State<LoginPadresScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String error = '';
   late AnimationController _controller;
 
+  bool modoConsulta = false; // ← Aquí guardaremos si venimos para “ver emociones”
+
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 5))..repeat();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 5))
+      ..repeat();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Recogemos el argumento que venga desde el Splash:
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is Map<String, dynamic> && args['modoConsulta'] == true) {
+      modoConsulta = true;
+    }
   }
 
   @override
@@ -29,13 +46,22 @@ class _LoginPadresScreenState extends State<LoginPadresScreen> with SingleTicker
     super.dispose();
   }
 
-  void _login() async {
+  Future<void> _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
     final padre = await PadresDB.instance.getPadre(email, password);
     if (padre != null) {
-      Navigator.pushReplacementNamed(context, '/ver_emociones');
+      // Login correcto. Si es modoConsulta, enviamos a HijosPadresScreen con modoConsulta = true
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HijosPadresScreen(modoConsulta: modoConsulta),
+          settings: RouteSettings(
+            arguments: {'modoConsulta': modoConsulta},
+          ),
+        ),
+      );
     } else {
       setState(() {
         error = 'Email o contraseña incorrectos';
@@ -239,10 +265,10 @@ class _WavePainter extends CustomPainter {
 
     path.moveTo(0, size.height);
     for (double i = 0; i <= size.width; i++) {
-      double y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight + size.height * 0.9;
+      double y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight +
+          size.height * 0.9;
       path.lineTo(i, y);
     }
-
     path.lineTo(size.width, size.height);
     path.close();
 

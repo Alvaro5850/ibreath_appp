@@ -1,8 +1,11 @@
+// lib/SentimientosScreen.dart
+
 import 'package:flutter/material.dart';
-import 'db_helper.dart'; // Asegúrate de importar tu helper
+import 'db_helper.dart';
+import 'db/session.dart';
 
 class SentimientoScreen extends StatefulWidget {
-  const SentimientoScreen({super.key});
+  const SentimientoScreen({Key? key}) : super(key: key);
 
   @override
   State<SentimientoScreen> createState() => _SentimientoScreenState();
@@ -13,6 +16,28 @@ class _SentimientoScreenState extends State<SentimientoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final hijoId = Session.hijoId;
+    if (hijoId == null) {
+  return Scaffold(
+    backgroundColor: Color(0xFF14749A),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('No hay perfil activo.', style: TextStyle(color: Colors.white)),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamedAndRemoveUntil(context, '/hijos_padres', (route) => false);
+            },
+            child: Text('Volver'),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
     return Scaffold(
       backgroundColor: const Color(0xFF14749A),
       body: Column(
@@ -27,7 +52,11 @@ class _SentimientoScreenState extends State<SentimientoScreen> {
                 IconButton(
                   icon: const Icon(Icons.home, color: Colors.white),
                   onPressed: () {
-                    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/',
+                      (route) => false,
+                    );
                   },
                 ),
                 Row(
@@ -59,6 +88,7 @@ class _SentimientoScreenState extends State<SentimientoScreen> {
             ),
           ),
           const SizedBox(height: 30),
+
           Wrap(
             spacing: 20,
             runSpacing: 20,
@@ -72,13 +102,17 @@ class _SentimientoScreenState extends State<SentimientoScreen> {
               _buildEmotion('Nervioso', 'assets/images/nervioso.png'),
             ],
           ),
+
           const SizedBox(height: 40),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               setState(() {
                 emocionSeleccionada = 'No lo sé';
               });
-              DBHelper.guardarEmocion('No lo sé');
+              await AppDatabase.instance.guardarEmocion(
+                hijoId: hijoId,
+                emocion: 'No lo sé',
+              );
               Navigator.pushNamed(context, '/mensaje_enviado');
             },
             style: ElevatedButton.styleFrom(
@@ -89,9 +123,12 @@ class _SentimientoScreenState extends State<SentimientoScreen> {
           ),
           const SizedBox(height: 10),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (emocionSeleccionada != null) {
-                DBHelper.guardarEmocion(emocionSeleccionada!);
+                await AppDatabase.instance.guardarEmocion(
+                  hijoId: hijoId,
+                  emocion: emocionSeleccionada!,
+                );
                 Navigator.pushNamed(context, '/mensaje_enviado');
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -124,7 +161,6 @@ class _SentimientoScreenState extends State<SentimientoScreen> {
 
   Widget _buildEmotion(String label, String imagePath) {
     final isSelected = emocionSeleccionada == label;
-
     return GestureDetector(
       onTap: () {
         setState(() {

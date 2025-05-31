@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:ibreath_appp/db_helper.dart';
+import 'db/session.dart';
 
 class SplashScreenWrapper extends StatelessWidget {
   const SplashScreenWrapper({super.key});
@@ -24,11 +26,19 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    super.initState();
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
     )..repeat();
-    super.initState();
+
+    final mensaje = Session.getMensajeTemporal();
+    if (mensaje != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mensaje)));
+      });
+    }
   }
 
   @override
@@ -39,9 +49,10 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final bool tieneHijoLogueado = Session.hijoId != null;
+
     return Stack(
       children: [
-        // 🌊 Fondo animado
         AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
@@ -51,25 +62,40 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
             );
           },
         ),
-
-        // 🧩 Contenido principal
         SafeArea(
           child: Stack(
             children: [
-              // 🔙 Icono Home
               const Positioned(
                 top: 20,
                 left: 20,
                 child: Icon(Icons.home, color: Colors.white, size: 28),
               ),
 
-              // 👤 Usuario niño arriba derecha
+              // 👤 Perfil niño (continuar o cambiar)
               Positioned(
                 top: 12,
                 right: 16,
                 child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/login_nino');
+                  onTap: () async {
+                    if (tieneHijoLogueado) {
+                      final elegido = await showDialog<_OpcionPerfil>(
+                        context: context,
+                        builder: (context) => _DialogoPerfilActual(),
+                      );
+
+                      if (elegido == _OpcionPerfil.continuar) {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          '/menu',
+                          (route) => false,
+                        );
+                      } else if (elegido == _OpcionPerfil.cambiar) {
+                        Session.clearHijo();
+                        Navigator.pushReplacementNamed(context, '/login_padres');
+                      }
+                    } else {
+                      Navigator.pushNamed(context, '/seleccion_perfil');
+                    }
                   },
                   child: const CircleAvatar(
                     radius: 20,
@@ -79,7 +105,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 💙 Imagen de pulmones y título
+              // 💙 Imagen + título iBreath
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 80),
@@ -126,7 +152,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 🧘 Botón principal
+              // 🧘 ¡Vamos allá!
               Positioned(
                 bottom: 120,
                 left: MediaQuery.of(context).size.width * 0.2,
@@ -136,7 +162,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                     Navigator.pushNamed(context, '/menu');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2EC8C6),
+                    backgroundColor: const Color(0xFF2EC8B6),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -151,16 +177,21 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 👨‍👧 Acceso padres
+              // 👨‍👧 Botón padres (consulta emociones)
               Positioned(
                 bottom: 20,
                 left: 10,
                 child: Column(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, '/login_padres');
-                      },
+  onTap: () {
+    Navigator.pushNamed(
+      context,
+      '/login_padres',
+      arguments: {'modoConsulta': true},
+    );
+  },
+
                       child: const CircleAvatar(
                         radius: 28,
                         backgroundImage: AssetImage('assets/images/parental.jpg'),
@@ -179,7 +210,7 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 🚨 Botón emergencia
+              // 🚨 Urgencia
               Positioned(
                 bottom: 20,
                 right: 10,
@@ -195,13 +226,19 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                     ),
                     const SizedBox(height: 4),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
+                        final hijoId = Session.hijoId;
+                        if (hijoId != null) {
+                          await AppDatabase.instance.guardarEmocion(
+                            hijoId: hijoId,
+                            emocion: 'Emergencia',
+                          );
+                        }
                         Navigator.pushNamed(context, '/help');
                       },
                       child: const CircleAvatar(
                         radius: 28,
-                        backgroundImage:
-                            AssetImage('assets/images/emergency boton.jpg'),
+                        backgroundImage: AssetImage('assets/images/emergency_boton.jpg'),
                       ),
                     ),
                   ],
@@ -215,7 +252,28 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
   }
 }
 
-// 🌊 Fondo animado
+enum _OpcionPerfil { continuar, cambiar }
+
+class _DialogoPerfilActual extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Perfil ya seleccionado'),
+      content: const Text('¿Deseas continuar o cambiar de perfil?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(_OpcionPerfil.continuar),
+          child: const Text('Continuar'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(_OpcionPerfil.cambiar),
+          child: const Text('Cambiar perfil'),
+        ),
+      ],
+    );
+  }
+}
+
 class WavePainter extends CustomPainter {
   final double animationValue;
 
@@ -236,10 +294,10 @@ class WavePainter extends CustomPainter {
 
     path.moveTo(0, size.height);
     for (double i = 0; i <= size.width; i++) {
-      final y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight + size.height * 0.9;
+      final y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight +
+          size.height * 0.9;
       path.lineTo(i, y);
     }
-
     path.lineTo(size.width, size.height);
     path.close();
 
