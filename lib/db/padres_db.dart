@@ -1,72 +1,69 @@
 // lib/db/padres_db.dart
 
+import 'package:ibreath_appp/db_helper.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+
 
 class PadresDB {
-  static final PadresDB instance = PadresDB._init();
-  static Database? _database;
+  PadresDB._privateConstructor();
+  static final PadresDB instance = PadresDB._privateConstructor();
 
-  PadresDB._init();
+  Future<Database> get _db async => await AppDatabase.instance.database;
 
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDB('padres.db');
-    return _database!;
+  /// Inserta un nuevo padre (email + password) en la tabla 'padres'
+  /// Parámetros nombrados: email y password.
+  Future<int> createPadre({
+    required String email,
+    required String password,
+  }) async {
+    final db = await _db;
+    return await db.insert(
+      AppDatabase.tablePadres,
+      {
+        'email': email,
+        'password': password,
+      },
+      // Si se intenta insertar un email ya existente, lanzará excepción
+      conflictAlgorithm: ConflictAlgorithm.abort,
+    );
   }
 
-  Future<Database> _initDB(String filePath) async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, filePath);
-
-    return await openDatabase(path, version: 1, onCreate: _createDB);
-  }
-
-  Future _createDB(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE padres (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL
-      )
-    ''');
-  }
-
-  Future<int> createPadre(String email, String password) async {
-    final db = await instance.database;
-    return await db.insert('padres', {'email': email, 'password': password});
-  }
-
-  Future<Map<String, dynamic>?> getPadre(String email, String password) async {
-    final db = await instance.database;
-    final result = await db.query(
-      'padres',
+  /// Devuelve el padre (campos id, email, password) si existe la combinación email+password
+  Future<Map<String, dynamic>?> getPadreByEmailPassword(
+      String email, String password) async {
+    final db = await _db;
+    final resultados = await db.query(
+      AppDatabase.tablePadres,
       where: 'email = ? AND password = ?',
       whereArgs: [email, password],
+      limit: 1,
     );
-    if (result.isNotEmpty) {
-      return result.first;
+    if (resultados.isNotEmpty) {
+      return resultados.first;
     }
     return null;
   }
 
+  /// Devuelve el padre (campos id, email, password) si existe el email (sin validar contraseña)
   Future<Map<String, dynamic>?> getPadreByEmail(String email) async {
-    final db = await instance.database;
-    final result = await db.query(
-      'padres',
+    final db = await _db;
+    final resultados = await db.query(
+      AppDatabase.tablePadres,
       where: 'email = ?',
       whereArgs: [email],
+      limit: 1,
     );
-    if (result.isNotEmpty) {
-      return result.first;
+    if (resultados.isNotEmpty) {
+      return resultados.first;
     }
     return null;
   }
 
+  /// Actualiza la contraseña del padre identificado por email
   Future<int> updatePassword(String email, String newPassword) async {
-    final db = await instance.database;
+    final db = await _db;
     return await db.update(
-      'padres',
+      AppDatabase.tablePadres,
       {'password': newPassword},
       where: 'email = ?',
       whereArgs: [email],

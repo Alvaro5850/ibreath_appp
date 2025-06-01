@@ -1,3 +1,5 @@
+// lib/registro_padres.dart
+
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../db/padres_db.dart';
@@ -9,7 +11,8 @@ class RegistroPadresScreen extends StatefulWidget {
   _RegistroPadresScreenState createState() => _RegistroPadresScreenState();
 }
 
-class _RegistroPadresScreenState extends State<RegistroPadresScreen> with SingleTickerProviderStateMixin {
+class _RegistroPadresScreenState extends State<RegistroPadresScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String mensaje = '';
@@ -18,7 +21,10 @@ class _RegistroPadresScreenState extends State<RegistroPadresScreen> with Single
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 5))..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
   }
 
   @override
@@ -31,8 +37,19 @@ class _RegistroPadresScreenState extends State<RegistroPadresScreen> with Single
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        mensaje = '⚠️ Completa todos los campos.';
+      });
+      return;
+    }
+
     try {
-      await PadresDB.instance.createPadre(email, password);
+      // ¡OJO! Parámetros nombrados:
+      await PadresDB.instance.createPadre(
+        email: email,
+        password: password,
+      );
       setState(() {
         mensaje = '✅ Registro exitoso. Ahora puedes iniciar sesión.';
       });
@@ -115,13 +132,15 @@ class _RegistroPadresScreenState extends State<RegistroPadresScreen> with Single
                       label: const Text('Registrarse'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2EC8B9),
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                     ),
                   ),
+
                   if (mensaje.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
@@ -192,15 +211,18 @@ class _WavePainter extends CustomPainter {
 
     path.moveTo(0, size.height);
     for (double i = 0; i <= size.width; i++) {
-      double y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight + size.height * 0.9;
+      final y =
+          sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight +
+              size.height * 0.9;
       path.lineTo(i, y);
     }
-
     path.lineTo(size.width, size.height);
     path.close();
 
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-    canvas.drawPath(path, Paint()..color = Colors.white.withOpacity(0.2));
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width, size.height), paint);
+    canvas.drawPath(
+        path, Paint()..color = Colors.white.withOpacity(0.2));
   }
 
   @override

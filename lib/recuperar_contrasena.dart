@@ -1,3 +1,5 @@
+// lib/recuperar_contrasena.dart
+
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '../db/padres_db.dart';
@@ -6,12 +8,16 @@ class RecuperarContrasenaScreen extends StatefulWidget {
   const RecuperarContrasenaScreen({Key? key}) : super(key: key);
 
   @override
-  _RecuperarContrasenaScreenState createState() => _RecuperarContrasenaScreenState();
+  _RecuperarContrasenaScreenState createState() =>
+      _RecuperarContrasenaScreenState();
 }
 
-class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> with SingleTickerProviderStateMixin {
+class _RecuperarContrasenaScreenState
+    extends State<RecuperarContrasenaScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _nuevaContrasenaController = TextEditingController();
+  final TextEditingController _nuevaContrasenaController =
+      TextEditingController();
   String mensaje = '';
 
   late AnimationController _controller;
@@ -19,7 +25,10 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> w
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 5))..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
   }
 
   @override
@@ -32,8 +41,17 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> w
     final email = _emailController.text.trim();
     final nuevaContrasena = _nuevaContrasenaController.text;
 
+    if (email.isEmpty || nuevaContrasena.isEmpty) {
+      setState(() {
+        mensaje = '⚠️ Completa todos los campos.';
+      });
+      return;
+    }
+
+    // 1) Buscamos si existe un padre con ese email
     final padre = await PadresDB.instance.getPadreByEmail(email);
     if (padre != null) {
+      // 2) Si existe, actualizamos la password
       await PadresDB.instance.updatePassword(email, nuevaContrasena);
       setState(() {
         mensaje = '✅ Contraseña actualizada correctamente.';
@@ -119,7 +137,8 @@ class _RecuperarContrasenaScreenState extends State<RecuperarContrasenaScreen> w
                       label: const Text('Actualizar contraseña'),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2EC8B9),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -197,15 +216,18 @@ class _WavePainter extends CustomPainter {
 
     path.moveTo(0, size.height);
     for (double i = 0; i <= size.width; i++) {
-      double y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight + size.height * 0.9;
+      final y =
+          sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight +
+              size.height * 0.9;
       path.lineTo(i, y);
     }
-
     path.lineTo(size.width, size.height);
     path.close();
 
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-    canvas.drawPath(path, Paint()..color = Colors.white.withOpacity(0.2));
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width, size.height), paint);
+    canvas.drawPath(
+        path, Paint()..color = Colors.white.withOpacity(0.2));
   }
 
   @override

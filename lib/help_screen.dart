@@ -170,7 +170,7 @@ class _HelpScreenState extends State<HelpScreen> with SingleTickerProviderStateM
                       ),
                       const CircleAvatar(
                         radius: 28,
-                        backgroundImage: AssetImage('assets/images/emergency boton.jpg'),
+                        backgroundImage: AssetImage('assets/images/emergency_boton.jpg'),
                       ),
                     ],
                   ),

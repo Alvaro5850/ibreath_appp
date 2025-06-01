@@ -1,11 +1,14 @@
 // lib/login_padres.dart
 
 import 'dart:math';
+
 import 'package:flutter/material.dart';
-import '../db/padres_db.dart';           // Tu base de datos de padres
+import '../db/padres_db.dart';
+import '../db_helper.dart';
+import '../db/session.dart';
+import 'hijos_padres.dart';
 import 'registro_padres.dart';
 import 'recuperar_contrasena.dart';
-import 'hijos_padres.dart';             // Importamos la pantalla HijosPadresScreen
 
 class LoginPadresScreen extends StatefulWidget {
   const LoginPadresScreen({Key? key}) : super(key: key);
@@ -21,45 +24,57 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
   String error = '';
   late AnimationController _controller;
 
-  bool modoConsulta = false; // ← Aquí guardaremos si venimos para “ver emociones”
+  bool modoConsulta = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 5))
-      ..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Recogemos el argumento que venga desde el Splash:
+    // Leer argumento 'modoConsulta' (viene desde Splash si es para ver emociones)
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args is Map<String, dynamic> && args['modoConsulta'] == true) {
       modoConsulta = true;
     }
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
   Future<void> _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    final padre = await PadresDB.instance.getPadre(email, password);
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        error = '⚠️ Completa ambos campos.';
+      });
+      return;
+    }
+
+    // Debug: imprime en consola lo que se intenta
+    print('Intentando login: email="$email", pass="$password"');
+
+    final padre =
+        await PadresDB.instance.getPadreByEmailPassword(email, password);
+
+    print('Resultado consulta padre: $padre');
+
     if (padre != null) {
-      // Login correcto. Si es modoConsulta, enviamos a HijosPadresScreen con modoConsulta = true
+      // Credenciales correctas: guardamos parentId en sesión
+      final parentId = padre[AppDatabase.columnId] as int;
+      Session.setParentId(parentId);
+
+      // Navegamos a HijosPadresScreen pasando modoConsulta
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => HijosPadresScreen(modoConsulta: modoConsulta),
-          settings: RouteSettings(
-            arguments: {'modoConsulta': modoConsulta},
-          ),
+          settings: RouteSettings(arguments: {'modoConsulta': modoConsulta}),
         ),
       );
     } else {
@@ -84,6 +99,12 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -98,14 +119,13 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
               );
             },
           ),
-
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ⬅️ Barra superior con botón atrás y usuario
+                  // ⬅️ Botón atrás y avatar
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -136,7 +156,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
 
                   const SizedBox(height: 40),
 
-                  // 📩 Email
                   _buildInputField(
                     controller: _emailController,
                     label: 'Email',
@@ -145,7 +164,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
 
                   const SizedBox(height: 20),
 
-                  // 🔒 Contraseña
                   _buildInputField(
                     controller: _passwordController,
                     label: 'Contraseña',
@@ -155,13 +173,13 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
 
                   const SizedBox(height: 30),
 
-                  // 🔘 Botón de iniciar sesión
                   Center(
                     child: ElevatedButton(
                       onPressed: _login,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2EC8B9),
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 14),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -183,7 +201,8 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
                       child: Center(
                         child: Text(
                           error,
-                          style: const TextStyle(color: Colors.redAccent, fontSize: 14),
+                          style: const TextStyle(
+                              color: Colors.redAccent, fontSize: 14),
                         ),
                       ),
                     ),
@@ -218,7 +237,7 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
     );
   }
 
-  // ✏️ Campo personalizado
+  // ✏️ Campo de texto personalizado
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
@@ -247,7 +266,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
 // 🎨 Olas animadas
 class _WavePainter extends CustomPainter {
   final double animationValue;
-
   _WavePainter(this.animationValue);
 
   @override
@@ -265,15 +283,18 @@ class _WavePainter extends CustomPainter {
 
     path.moveTo(0, size.height);
     for (double i = 0; i <= size.width; i++) {
-      double y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight +
-          size.height * 0.9;
+      final y =
+          sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight +
+              size.height * 0.9;
       path.lineTo(i, y);
     }
     path.lineTo(size.width, size.height);
     path.close();
 
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), paint);
-    canvas.drawPath(path, Paint()..color = Colors.white.withOpacity(0.2));
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width, size.height), paint);
+    canvas.drawPath(
+        path, Paint()..color = Colors.white.withOpacity(0.2));
   }
 
   @override
