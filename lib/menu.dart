@@ -1,7 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'help_screen.dart';
-import 'relajacion.dart'; // ✅ IMPORTACIÓN DE LA PANTALLA RELAJACIÓN
+import 'relajacion.dart';
+import 'cuentos.dart'; // ✅ NUEVO: Importación de la pantalla de cuentos
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -65,7 +66,6 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
           SafeArea(
             child: Stack(
               children: [
-                // Icono Home
                 Positioned(
                   top: 20,
                   left: 20,
@@ -76,7 +76,6 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                     },
                   ),
                 ),
-                // Icono usuario niño
                 Positioned(
                   top: 12,
                   right: 16,
@@ -91,7 +90,6 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                     ),
                   ),
                 ),
-                // Contenido central
                 Padding(
                   padding: const EdgeInsets.only(top: 80),
                   child: Column(
@@ -132,11 +130,11 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                               _navigateWithTransition(context, const HelpScreen());
                             }),
                             _buildAnimatedOption('assets/images/cuento.jpg', 'Cuenta Cuentos', () {
-                              _navigateWithTransition(context, const Placeholder());
+                              _navigateWithTransition(context, const CuentoScreen()); // ✅ ACTUALIZADO
                             }),
-                           _buildAnimatedOption('assets/images/puzzle.jpg', 'Juega!', () {
-  Navigator.pushNamed(context, '/jugar_puzzle');
-}),
+                            _buildAnimatedOption('assets/images/puzzle.jpg', 'Juega!', () {
+                              Navigator.pushNamed(context, '/jugar_puzzle');
+                            }),
                           ],
                         ),
                       ),
@@ -156,7 +154,6 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
   }
 }
 
-// Fondo animado
 class WavePainter extends CustomPainter {
   final double animationValue;
 
@@ -171,11 +168,11 @@ class WavePainter extends CustomPainter {
         end: Alignment.bottomRight,
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     final path = Path();
-    final double waveHeight = 30;
+    const double waveHeight = 30;
     final double waveSpeed = animationValue * 2 * pi;
     path.moveTo(0, size.height);
     for (double i = 0; i <= size.width; i++) {
-      double y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight + size.height * 0.9;
+      final y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight + size.height * 0.9;
       path.lineTo(i, y);
     }
     path.lineTo(size.width, size.height);
@@ -188,7 +185,6 @@ class WavePainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
-// Botón animado
 class _AnimatedMenuButton extends StatefulWidget {
   final String img;
   final String label;

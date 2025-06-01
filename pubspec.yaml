@@ -21,6 +21,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
+  audioplayers: ^5.2.1
+
 
 flutter:
 
@@ -30,3 +32,11 @@ flutter:
     - assets/images/
     - assets/sounds/inner-peace-339640.mp3
     - assets/sounds/ding.mp3
+    - assets/sounds/05100087.mp3
+    - assets/sounds/1 LA BELLA DURMIENTE.mp3
+    - assets/images/cuento.jpg
+    - assets/images/bella1.jpg
+    - assets/images/peterpan.jpg
+    - assets/sounds/5 PETER PAN Y EL GRAN JEFE.mp3
+    - assets/sounds/4 LOS 2 CONEJOS.mp3
+    - assets/images/conejos.jpg
