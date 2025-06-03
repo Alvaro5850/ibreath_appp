@@ -256,7 +256,6 @@ class _SentimientoScreenState extends State<SentimientoScreen>
   }
 }
 
-// 🌊 Fondo animado
 class _WavePainter extends CustomPainter {
   final double animationValue;
 

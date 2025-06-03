@@ -23,7 +23,7 @@ class _MensajeEnviadoScreenState extends State<MensajeEnviadoScreen>
 
     _player = AudioPlayer()
       ..setReleaseMode(ReleaseMode.loop)
-      ..play(AssetSource('sounds/relax.mp3')); // Asegúrate que el archivo exista
+      ..play(AssetSource('sounds/relax.mp3'));
   }
 
   @override
@@ -85,7 +85,6 @@ class _MensajeEnviadoScreenState extends State<MensajeEnviadoScreen>
 
                 const SizedBox(height: 20),
 
-                // Animación del corazón
                 Lottie.asset(
                   'assets/animations/beating_heart.json',
                   height: 180,
@@ -166,7 +165,6 @@ class _MensajeEnviadoScreenState extends State<MensajeEnviadoScreen>
   }
 }
 
-// 🌊 Fondo animado con gradiente + ola blanca
 class WavePainter extends CustomPainter {
   final double animationValue;
 
@@ -176,7 +174,6 @@ class WavePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final Rect rect = Rect.fromLTWH(0, 0, size.width, size.height);
 
-    // 🎨 Fondo degradado azul-verde (como en el splash)
     final Paint backgroundPaint = Paint()
       ..shader = const LinearGradient(
         colors: [Color(0xFF0B486B), Color(0xFF3B8686)],
@@ -186,7 +183,6 @@ class WavePainter extends CustomPainter {
 
     canvas.drawRect(rect, backgroundPaint);
 
-    // 🌊 Ola animada blanca
     final Paint wavePaint = Paint()..color = Colors.white.withOpacity(0.2);
     final path = Path();
     const double waveHeight = 30;

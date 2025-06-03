@@ -1,4 +1,3 @@
-// lib/seleccion_perfil.dart
 
 import 'package:flutter/material.dart';
 import 'db_helper.dart';
@@ -58,7 +57,6 @@ class _SeleccionPerfilScreenState
   }
 
   Widget _buildBody() {
-    // 1) Si no hay padre logueado:
     if (padreId == null) {
       return Center(
         child: Column(
@@ -86,7 +84,6 @@ class _SeleccionPerfilScreenState
       );
     }
 
-    // 2) Si el padre está logueado pero no hay hijos:
     if (hijos.isEmpty) {
       return Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -117,7 +114,6 @@ class _SeleccionPerfilScreenState
       );
     }
 
-    // 3) Si hay hijos, los listamos
     return ListView.builder(
       itemCount: hijos.length,
       itemBuilder: (context, index) {

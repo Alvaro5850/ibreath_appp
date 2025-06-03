@@ -1,4 +1,3 @@
-// lib/login_padres.dart
 
 import 'dart:math';
 
@@ -38,7 +37,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Leer argumento 'modoConsulta' (viene desde Splash si es para ver emociones)
     final args = ModalRoute.of(context)?.settings.arguments;
     if (args is Map<String, dynamic> && args['modoConsulta'] == true) {
       modoConsulta = true;
@@ -56,7 +54,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
       return;
     }
 
-    // Debug: imprime en consola lo que se intenta
     print('Intentando login: email="$email", pass="$password"');
 
     final padre =
@@ -65,11 +62,9 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
     print('Resultado consulta padre: $padre');
 
     if (padre != null) {
-      // Credenciales correctas: guardamos parentId en sesión
       final parentId = padre[AppDatabase.columnId] as int;
       Session.setParentId(parentId);
 
-      // Navegamos a HijosPadresScreen pasando modoConsulta
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -109,7 +104,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
     return Scaffold(
       body: Stack(
         children: [
-          // 🌊 Fondo animado
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -125,7 +119,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ⬅️ Botón atrás y avatar
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -209,7 +202,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
 
                   const SizedBox(height: 20),
 
-                  // 🔗 Enlaces
                   Center(
                     child: TextButton(
                       onPressed: _navigateToRegistro,
@@ -237,7 +229,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
     );
   }
 
-  // ✏️ Campo de texto personalizado
   Widget _buildInputField({
     required TextEditingController controller,
     required String label,
@@ -263,7 +254,6 @@ class _LoginPadresScreenState extends State<LoginPadresScreen>
   }
 }
 
-// 🎨 Olas animadas
 class _WavePainter extends CustomPainter {
   final double animationValue;
   _WavePainter(this.animationValue);

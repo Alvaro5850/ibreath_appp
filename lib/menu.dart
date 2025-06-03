@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'help_screen.dart';
 import 'relajacion.dart';
-import 'cuentos.dart'; // ✅ NUEVO: Importación de la pantalla de cuentos
+import 'cuentos.dart'; 
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -130,7 +130,7 @@ class _MenuScreenState extends State<MenuScreen> with SingleTickerProviderStateM
                               _navigateWithTransition(context, const HelpScreen());
                             }),
                             _buildAnimatedOption('assets/images/cuento.jpg', 'Cuenta Cuentos', () {
-                              _navigateWithTransition(context, const CuentoScreen()); // ✅ ACTUALIZADO
+                              _navigateWithTransition(context, const CuentoScreen());
                             }),
                             _buildAnimatedOption('assets/images/puzzle.jpg', 'Juega!', () {
                               Navigator.pushNamed(context, '/jugar_puzzle');

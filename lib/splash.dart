@@ -71,7 +71,6 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 child: Icon(Icons.home, color: Colors.white, size: 28),
               ),
 
-              // 👤 Perfil niño (continuar o cambiar)
               Positioned(
                 top: 12,
                 right: 16,
@@ -105,7 +104,6 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 💙 Imagen + título iBreath
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 80),
@@ -152,7 +150,6 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 🧘 ¡Vamos allá!
               Positioned(
                 bottom: 120,
                 left: MediaQuery.of(context).size.width * 0.2,
@@ -177,7 +174,6 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 👨‍👧 Botón padres (consulta emociones)
               Positioned(
                 bottom: 20,
                 left: 10,
@@ -210,7 +206,6 @@ class _SplashState extends State<Splash> with SingleTickerProviderStateMixin {
                 ),
               ),
 
-              // 🚨 Urgencia
               Positioned(
                 bottom: 20,
                 right: 10,

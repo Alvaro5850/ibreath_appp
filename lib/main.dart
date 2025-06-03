@@ -12,9 +12,8 @@ import 'registro_padres.dart';
 import 'seleccion_perfil.dart';
 import 'registro_hijo.dart';
 import 'hijos_padres.dart';
-import 'puzzle_game_screen.dart'; // importa la pantalla
+import 'puzzle_game_screen.dart';
 void main() {
-  // Solo inicializa esto si estás en Windows
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
     initDatabaseForWindows();
   }
@@ -45,7 +44,7 @@ class MyApp extends StatelessWidget {
         '/mensaje_enviado': (context) => const MensajeEnviadoScreen(),
         '/ver_emociones': (context) => const VerEmocionesScreen(),
         '/login_padres': (context) => const LoginPadresScreen(), 
-         '/registro_padres': (context) => const RegistroPadresScreen(),
+        '/registro_padres': (context) => const RegistroPadresScreen(),
         '/seleccion_perfil': (context) => const SeleccionPerfilScreen(),
         '/hijos_padres': (context) => const HijosPadresScreen(),
         '/registro_hijo': (context) => const RegistroHijoScreen(),

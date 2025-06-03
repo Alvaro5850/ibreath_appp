@@ -185,7 +185,6 @@ class _RegistroHijoScreenState extends State<RegistroHijoScreen>
   }
 }
 
-// 🌊 Fondo animado igual que el Splash
 class WavePainter extends CustomPainter {
   final double animationValue;
 

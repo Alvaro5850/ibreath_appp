@@ -1,4 +1,3 @@
-// lib/db/db_helper.dart
 
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -7,21 +6,17 @@ class AppDatabase {
   static const _databaseName = 'ibreath_app.db';
   static const _databaseVersion = 2;
 
-  // ───────────────────────────── tablas y columnas ─────────────────────────────
 
-  // TABLA PADRES (suponemos que ésta ya existía o se creó sin problemas)
   static const String tablePadres    = 'padres';
   static const String columnId       = 'id';
   static const String columnEmail    = 'email';
   static const String columnPassword = 'password';
 
-  // TABLA HIJOS (usamos `parentId` para coincidir con el esquema que ya tienes)
   static const String tableHijos      = 'hijos';
   static const String columnNombre    = 'nombre';
   static const String columnEdad      = 'edad';
-  static const String columnParentId  = 'parentId'; // <<-- columna antigua
+  static const String columnParentId  = 'parentId';
 
-  // TABLA EMOCIONES
   static const String tableEmociones  = 'emociones';
   static const String columnHijoId    = 'hijoId';
   static const String columnEmocion   = 'emocion';
@@ -49,10 +44,8 @@ class AppDatabase {
     );
   }
 
-  /// Se ejecuta la primera vez que no existe la BD (versión 2).
-  /// Creamos tablas completas: padres, hijos (con parentId) y emociones.
+
   Future _onCreate(Database db, int version) async {
-    // 1) Tabla PADRES
     await db.execute('''
       CREATE TABLE $tablePadres (
         $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -61,7 +54,6 @@ class AppDatabase {
       )
     ''');
 
-    // 2) Tabla HIJOS (con parentId NOT NULL)
     await db.execute('''
       CREATE TABLE $tableHijos (
         $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,7 +64,6 @@ class AppDatabase {
       )
     ''');
 
-    // 3) Tabla EMOCIONES
     await db.execute('''
       CREATE TABLE $tableEmociones (
         $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -84,13 +75,9 @@ class AppDatabase {
     ''');
   }
 
-  /// Si la BD existente era versión 1 (no tenía parentId en hijos),
-  /// al pasar a versión 2 hacemos el upgrade: 
-  /// - Añadimos la tabla `padres` (si no existía)
-  /// - Creamos o ajustamos la tabla `hijos` para que tenga `parentId`
+
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2 && newVersion >= 2) {
-      // 1) Crear tabla PADRES si no existía
       await db.execute('''
         CREATE TABLE IF NOT EXISTS $tablePadres (
           $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -99,17 +86,10 @@ class AppDatabase {
         )
       ''');
 
-      // 2) Comprobamos si la columna parentId ya existe
-      //    Si no existe, la añadimos. Para simplificar, borramos y volvemos a crear `hijos`.
-      //    Esto eliminará datos antiguos de hijos, pero es la forma más directa
-      //    si no quieres borrar manualmente la base. 
-      //    Si prefieres migrar datos, tendrías que:
-      //      a) Renombrar la tabla antigua, b) Crear nueva con parentId, c) INSERT SELECT, d) Borrar tabla antigua.
-      //    Aquí optamos por soltar y crear de nuevo:
+
 
       await db.execute('DROP TABLE IF EXISTS $tableHijos');
 
-      // 3) Crear tabla HIJOS (con parentId)
       await db.execute('''
         CREATE TABLE $tableHijos (
           $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -122,9 +102,6 @@ class AppDatabase {
     }
   }
 
-  // ─────────────────────────────────────────────
-  // MÉTODOS PARA PADRES
-  // ─────────────────────────────────────────────
 
   Future<int> createPadre({
     required String email,
@@ -176,14 +153,11 @@ class AppDatabase {
     );
   }
 
-  // ─────────────────────────────────────────────
-  // MÉTODOS PARA HIJOS (ahora con parentId)
-  // ─────────────────────────────────────────────
 
   Future<int> createChild({
     required String nombre,
     required int edad,
-    required int parentId,       // <<–– usamos parentId aquí
+    required int parentId,
   }) async {
     final db = await database;
     return await db.insert(
@@ -215,9 +189,6 @@ class AppDatabase {
     );
   }
 
-  // ─────────────────────────────────────────────
-  // MÉTODOS PARA EMOCIONES
-  // ─────────────────────────────────────────────
 
   Future<int> guardarEmocion({
     required int hijoId,

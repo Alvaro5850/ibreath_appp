@@ -194,7 +194,6 @@ class _HijosPadresScreenState extends State<HijosPadresScreen>
   }
 }
 
-// 🌊 Fondo animado con degradado y ola blanca
 class WavePainter extends CustomPainter {
   final double animationValue;
 

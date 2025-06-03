@@ -14,7 +14,7 @@ dependencies:
   sqflite_common_ffi: ^2.3.0
   path: ^1.9.0
   cupertino_icons: ^1.0.8
-  audioplayers: ^5.2.0 # ✅ para reproducir sonido relajante
+  audioplayers: ^5.2.0
   lottie: ^2.6.0
   gap: ^2.0.1
 dev_dependencies:

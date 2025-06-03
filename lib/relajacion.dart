@@ -87,7 +87,6 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
     return Scaffold(
       body: Stack(
         children: [
-          // 🌊 Fondo animado
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -98,7 +97,6 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
             },
           ),
 
-          // 🌬️ Contenido
           SafeArea(
             child: Column(
               children: [
@@ -130,7 +128,6 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
                 ),
                 const SizedBox(height: 30),
 
-                // 🎯 Círculo de respiración
                 Expanded(
                   child: Center(
                     child: ScaleTransition(
@@ -176,7 +173,6 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
                   ),
                 ),
 
-                // 🎧 Control de volumen
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Column(
@@ -198,7 +194,6 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
                   ),
                 ),
 
-                // 🟢 Botones
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -242,7 +237,6 @@ class _RelajacionScreenState extends State<RelajacionScreen> with SingleTickerPr
   }
 }
 
-// 🌊 Olas suaves de fondo
 class _WavePainter extends CustomPainter {
   final double animationValue;
 

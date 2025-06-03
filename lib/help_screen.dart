@@ -30,13 +30,13 @@ class _HelpScreenState extends State<HelpScreen> with SingleTickerProviderStateM
   }
 
   void _playComfortMessage() async {
-    await _audioPlayer.play(AssetSource('sounds/comfort.mp3')); // asegúrate de tener este archivo
+    await _audioPlayer.play(AssetSource('sounds/comfort.mp3'));
   }
 
   void _handleYesPressed() async {
     _playComfortMessage();
 
-    // Esperar un momento para que el niño perciba el mensaje
+    
     await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {
@@ -49,7 +49,6 @@ class _HelpScreenState extends State<HelpScreen> with SingleTickerProviderStateM
     return Scaffold(
       body: Stack(
         children: [
-          // 🌊 Fondo animado
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -60,12 +59,10 @@ class _HelpScreenState extends State<HelpScreen> with SingleTickerProviderStateM
             },
           ),
 
-          // 📦 Contenido principal
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // 🔝 Superior
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -110,11 +107,10 @@ class _HelpScreenState extends State<HelpScreen> with SingleTickerProviderStateM
 
                 const SizedBox(height: 30),
 
-                // 🌈 Imagen emocional amigable
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: Image.asset(
-                    'assets/images/relajacion_sin_fondo.png', // asegúrate de usar un nombre válido en assets
+                    'assets/images/relajacion_sin_fondo.png',
                     height: 180,
                     fit: BoxFit.contain,
                   ),
@@ -122,7 +118,6 @@ class _HelpScreenState extends State<HelpScreen> with SingleTickerProviderStateM
 
                 const SizedBox(height: 40),
 
-                // 🟢 Botón Sí
                 ElevatedButton.icon(
                   onPressed: _handleYesPressed,
                   icon: const Icon(Icons.favorite, size: 26),
@@ -140,7 +135,6 @@ class _HelpScreenState extends State<HelpScreen> with SingleTickerProviderStateM
 
                 const SizedBox(height: 20),
 
-                // ⚪ Botón No
                 ElevatedButton.icon(
                   onPressed: () => Navigator.pop(context),
                   icon: const Icon(Icons.thumb_up_alt_rounded),
@@ -158,7 +152,6 @@ class _HelpScreenState extends State<HelpScreen> with SingleTickerProviderStateM
 
                 const Spacer(),
 
-                // 🔻 Emergencia y volver
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
                   child: Row(

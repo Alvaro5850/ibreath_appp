@@ -224,7 +224,6 @@ class _PuzzleGameScreenState extends State<PuzzleGameScreen>
   }
 }
 
-// Fondo animado como en iBreath
 class WavePainter extends CustomPainter {
   final double animationValue;
 

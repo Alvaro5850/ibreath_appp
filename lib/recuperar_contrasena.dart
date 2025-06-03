@@ -1,4 +1,3 @@
-// lib/recuperar_contrasena.dart
 
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -48,10 +47,8 @@ class _RecuperarContrasenaScreenState
       return;
     }
 
-    // 1) Buscamos si existe un padre con ese email
     final padre = await PadresDB.instance.getPadreByEmail(email);
     if (padre != null) {
-      // 2) Si existe, actualizamos la password
       await PadresDB.instance.updatePassword(email, nuevaContrasena);
       setState(() {
         mensaje = '✅ Contraseña actualizada correctamente.';
@@ -68,7 +65,6 @@ class _RecuperarContrasenaScreenState
     return Scaffold(
       body: Stack(
         children: [
-          // 🌊 Fondo animado
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
@@ -84,7 +80,6 @@ class _RecuperarContrasenaScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Encabezado con iconos
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -195,7 +190,6 @@ class _RecuperarContrasenaScreenState
   }
 }
 
-// 🌊 Fondo animado
 class _WavePainter extends CustomPainter {
   final double animationValue;
 

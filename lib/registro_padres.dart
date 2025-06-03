@@ -1,4 +1,3 @@
-// lib/registro_padres.dart
 
 import 'dart:math';
 import 'package:flutter/material.dart';
@@ -45,7 +44,6 @@ class _RegistroPadresScreenState extends State<RegistroPadresScreen>
     }
 
     try {
-      // ¡OJO! Parámetros nombrados:
       await PadresDB.instance.createPadre(
         email: email,
         password: password,
@@ -190,7 +188,6 @@ class _RegistroPadresScreenState extends State<RegistroPadresScreen>
   }
 }
 
-// 🎨 Fondo de olas animadas
 class _WavePainter extends CustomPainter {
   final double animationValue;
 

@@ -170,7 +170,6 @@ class _CuentoScreenState extends State<CuentoScreen> with SingleTickerProviderSt
                 ),
                 const SizedBox(height: 30),
 
-                // Imagen grande
                 Center(
                   child: AnimatedScale(
                     scale: _isPlaying ? 1.0 : 0.95,
