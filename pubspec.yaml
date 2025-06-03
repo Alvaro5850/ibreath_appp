@@ -22,6 +22,9 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
   audioplayers: ^5.2.1
+  lottie: ^2.7.0
+  intl: ^0.17.0
+  confetti: ^0.7.0
 
 
 flutter:
@@ -41,3 +44,5 @@ flutter:
     - assets/sounds/4 LOS 2 CONEJOS.mp3
     - assets/images/conejos.jpg
     - assets/sounds/relax.mp3
+    - assets/animations/beating_heart.json
+    - assets/images/calma.png

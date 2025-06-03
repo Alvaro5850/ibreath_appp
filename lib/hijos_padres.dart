@@ -1,5 +1,4 @@
-// lib/hijos_padres.dart
-
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'db_helper.dart';
 import 'db/session.dart';
@@ -13,22 +12,28 @@ class HijosPadresScreen extends StatefulWidget {
   _HijosPadresScreenState createState() => _HijosPadresScreenState();
 }
 
-class _HijosPadresScreenState extends State<HijosPadresScreen> {
+class _HijosPadresScreenState extends State<HijosPadresScreen>
+    with SingleTickerProviderStateMixin {
   List<Map<String, dynamic>> hijos = [];
   int? padreId;
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
     padreId = Session.getParentId();
     _cargarHijos();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..repeat();
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Aquí podrías leer arguments si viene desde Login, pero como ya lo pasamos en el constructor,
-    // no es estrictamente necesario volver a leerlos.
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<void> _cargarHijos() async {
@@ -47,31 +52,47 @@ class _HijosPadresScreenState extends State<HijosPadresScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF14749A),
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         title: const Text('Tus Hijos', style: TextStyle(color: Colors.white)),
-        backgroundColor: const Color(0xFF14749A),
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          // Solo si NO estamos en modoConsulta Y sí hay un padre logueado, mostramos “+”:
-          if (!widget.modoConsulta && padreId != null)
-            IconButton(
-              icon: const Icon(Icons.add, color: Colors.white),
-              tooltip: 'Añadir nuevo hijo',
+      ),
+      body: Stack(
+        children: [
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (_, __) => CustomPaint(
+              painter: WavePainter(_controller.value),
+              child: Container(),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: hijoIdNullOrEmpty(padreId, hijos),
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: (!widget.modoConsulta && padreId != null)
+          ? FloatingActionButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/registro_hijo').then((_) {
                   _cargarHijos();
                 });
               },
-            ),
-        ],
-      ),
-      body: hijoIdNullOrEmpty(padreId, hijos),
+              backgroundColor: const Color(0xFF2EC8B9),
+              child: const Icon(Icons.add, color: Colors.white),
+              tooltip: 'Añadir nuevo hijo',
+            )
+          : null,
     );
   }
 
   Widget hijoIdNullOrEmpty(int? padre, List<Map<String, dynamic>> listaHijos) {
-    // Si no hay padre logueado, mostramos mensaje:
     if (padre == null) {
       return Center(
         child: Column(
@@ -99,8 +120,6 @@ class _HijosPadresScreenState extends State<HijosPadresScreen> {
       );
     }
 
-    // Si el padre está logueado pero no tiene hijos (lista vacía),
-    // en modoConsulta == false dejamos ver botón de “Añadir hijo”:
     if (listaHijos.isEmpty) {
       return Center(
         child: Column(
@@ -131,8 +150,8 @@ class _HijosPadresScreenState extends State<HijosPadresScreen> {
       );
     }
 
-    // Si hay hijos, los listamos:
     return ListView.builder(
+      padding: const EdgeInsets.only(top: 10, bottom: 80),
       itemCount: listaHijos.length,
       itemBuilder: (context, index) {
         final hijo = listaHijos[index];
@@ -141,14 +160,19 @@ class _HijosPadresScreenState extends State<HijosPadresScreen> {
         final edad = hijo[AppDatabase.columnEdad] as int;
 
         return Card(
-          color: const Color(0xFF2EC8B9),
-          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          color: Colors.white.withOpacity(0.15),
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           child: ListTile(
-            leading: const Icon(Icons.child_care, color: Colors.white),
+            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+            leading: const CircleAvatar(
+              backgroundColor: Color(0xFF2EC8B9),
+              radius: 24,
+              child: Icon(Icons.emoji_emotions, color: Colors.white),
+            ),
             title: Text(
               nombre,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               'Edad: $edad',
@@ -156,12 +180,9 @@ class _HijosPadresScreenState extends State<HijosPadresScreen> {
             ),
             onTap: () {
               Session.setHijoId(id);
-
               if (widget.modoConsulta) {
-                // 🔍 Estamos en modo consulta → vamos a ver emociones
                 Navigator.pushReplacementNamed(context, '/ver_emociones');
               } else {
-                // 🔀 Modo cambio de perfil → volvemos al Splash con mensaje
                 Session.setMensajeTemporal('Perfil cambiado correctamente');
                 Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
               }
@@ -171,4 +192,43 @@ class _HijosPadresScreenState extends State<HijosPadresScreen> {
       },
     );
   }
+}
+
+// 🌊 Fondo animado con degradado y ola blanca
+class WavePainter extends CustomPainter {
+  final double animationValue;
+
+  WavePainter(this.animationValue);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Rect rect = Rect.fromLTWH(0, 0, size.width, size.height);
+
+    final Paint backgroundPaint = Paint()
+      ..shader = const LinearGradient(
+        colors: [Color(0xFF0B486B), Color(0xFF3B8686)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ).createShader(rect);
+
+    canvas.drawRect(rect, backgroundPaint);
+
+    final Paint wavePaint = Paint()..color = Colors.white.withOpacity(0.2);
+    final path = Path();
+    const double waveHeight = 30;
+    final double waveSpeed = animationValue * 2 * pi;
+
+    path.moveTo(0, size.height);
+    for (double i = 0; i <= size.width; i++) {
+      final y = sin((i / size.width * 2 * pi) + waveSpeed) * waveHeight + size.height * 0.9;
+      path.lineTo(i, y);
+    }
+
+    path.lineTo(size.width, size.height);
+    path.close();
+    canvas.drawPath(path, wavePaint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

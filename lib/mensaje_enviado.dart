@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:lottie/lottie.dart';
 
 class MensajeEnviadoScreen extends StatefulWidget {
   const MensajeEnviadoScreen({super.key});
@@ -22,7 +23,7 @@ class _MensajeEnviadoScreenState extends State<MensajeEnviadoScreen>
 
     _player = AudioPlayer()
       ..setReleaseMode(ReleaseMode.loop)
-      ..play(AssetSource('sounds/relax.mp3')); // 🟡 Asegúrate de tener el audio
+      ..play(AssetSource('sounds/relax.mp3')); // Asegúrate que el archivo exista
   }
 
   @override
@@ -50,7 +51,6 @@ class _MensajeEnviadoScreenState extends State<MensajeEnviadoScreen>
           SafeArea(
             child: Column(
               children: [
-                // 🔹 CABECERA
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   child: Row(
@@ -76,41 +76,63 @@ class _MensajeEnviadoScreenState extends State<MensajeEnviadoScreen>
                 const Text(
                   'iBreath',
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 30,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                     fontFamily: 'ADLaM Display',
                   ),
                 ),
+
                 const SizedBox(height: 20),
+
+                // Animación del corazón
+                Lottie.asset(
+                  'assets/animations/beating_heart.json',
+                  height: 180,
+                  repeat: true,
+                  animate: true,
+                ),
+
+                const SizedBox(height: 10),
+
                 const Text(
                   '¡Mensaje enviado!',
                   style: TextStyle(
                     fontSize: 28,
+                    fontWeight: FontWeight.bold,
                     fontFamily: 'ABeeZee',
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 const Text(
-                  'Mantén la calma',
+                  'Tus personas de confianza\nya fueron notificadas 💌',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
                     fontFamily: 'ABeeZee',
                     color: Colors.white70,
                   ),
                 ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Respira suave... todo está bien ',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: 'ABeeZee',
+                    color: Colors.white60,
+                  ),
+                ),
 
                 const SizedBox(height: 30),
 
-                // 🖼 Imagen de calma
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: Image.asset(
                       'assets/images/calma.png',
-                      height: 230,
+                      height: 180,
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -123,13 +145,15 @@ class _MensajeEnviadoScreenState extends State<MensajeEnviadoScreen>
                     _player.stop();
                     Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Volver'),
+                  icon: const Icon(Icons.favorite),
+                  label: const Text('Volver a respirar'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white24,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.teal,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                    textStyle: const TextStyle(fontSize: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    elevation: 3,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -142,7 +166,7 @@ class _MensajeEnviadoScreenState extends State<MensajeEnviadoScreen>
   }
 }
 
-// 🌊 Fondo animado
+// 🌊 Fondo animado con gradiente + ola blanca
 class WavePainter extends CustomPainter {
   final double animationValue;
 
@@ -150,13 +174,20 @@ class WavePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
+    final Rect rect = Rect.fromLTWH(0, 0, size.width, size.height);
+
+    // 🎨 Fondo degradado azul-verde (como en el splash)
+    final Paint backgroundPaint = Paint()
       ..shader = const LinearGradient(
         colors: [Color(0xFF0B486B), Color(0xFF3B8686)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+      ).createShader(rect);
 
+    canvas.drawRect(rect, backgroundPaint);
+
+    // 🌊 Ola animada blanca
+    final Paint wavePaint = Paint()..color = Colors.white.withOpacity(0.2);
     final path = Path();
     const double waveHeight = 30;
     final double waveSpeed = animationValue * 2 * pi;
@@ -169,7 +200,7 @@ class WavePainter extends CustomPainter {
 
     path.lineTo(size.width, size.height);
     path.close();
-    canvas.drawPath(path, Paint()..color = Colors.white.withOpacity(0.2));
+    canvas.drawPath(path, wavePaint);
   }
 
   @override
